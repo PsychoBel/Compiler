@@ -3,9 +3,10 @@ import java.util.List;
 
 public class Parser
 {
-    private final List<Token> tokens;
+    private final List<Token> tokens; // список токенов
     private ListOfVariables lVariables;
-    private int counter = 0;
+    private int counter = 0; // счетчик
+    private Token token = null;
 
     public Parser(List<Token> tokens)
     {
@@ -47,7 +48,7 @@ public class Parser
         SEMICOLON();
     }
 
-    private  void variableAssigment() throws LangParseException
+    private  void variableAssigment() throws LangParseException // присвоение
     {
         VAR();
         ASSIGN_OP();
@@ -64,7 +65,7 @@ public class Parser
         SEMICOLON();
     }
 
-    private void cycle_for() throws LangParseException
+    private void loop_for() throws LangParseException
     {
         KEY_FOR();
         ROUND_OPEN_BRACKET();
@@ -127,60 +128,64 @@ public class Parser
         }
     }
 
-    private  void value_expr () throws LangParseException
+    private  void value_expr () throws LangParseException // проверяем 1 элемент строки и от этого оттакливаемся, что проверять далее
     {
-        int step = counter; // сохраняем счетчик
-        try {
+        int newCounter = counter; // сохранение состояния счетчика, чтобы проверять тот же эелемент (в первом случае token.get(step) - KEY_DATA_TYPE)
+        try
+        {
             variableCreation(); // пытаемся создать переменную
-            boolean create = lVariables.addVariable(new ListOfVariables.OneOfVariables(tokens.get(step).getValue(), tokens.get(step + 1).getValue()));
-            if (!create)
+            if (lVariables.checkIfValueExist(new ListOfVariables.OneOfVariables(tokens.get(newCounter + 1).getValue()))) // проверка на то, существует ли уже наша переменная в таблице переменных
             {
-                System.out.println("VARIABLE ALREADY EXISTS!");
-                throw new LangParseException("VARIABLE ALREADY EXISTS!");
+                System.out.println("ERROR: VARIABLE ALREADY EXISTS!");
+                throw new LangParseException("ERROR: VARIABLE ALREADY EXISTS!");
             }
+            else
+            {
+                lVariables.addVariable(new ListOfVariables.OneOfVariables(tokens.get(newCounter).getValue(), tokens.get(newCounter + 1).getValue())); // если не сузествует, то добавляем в таблицу переменных, нашу переменную с ее типом
+            }
+
         } catch (LangParseException e)
         {
-            counter = step;
+            counter = newCounter; // в этом случае tokens.get(step) - VAR
             try
             {
-                variableAssigment();
+                variableAssigment(); // пытаемся присвоить уже существующей переменной новое значение
 
-                boolean assign = lVariables.checkIfValueExist(new ListOfVariables.OneOfVariables(tokens.get(step).getValue()));
-
-                if (!assign)
+                if (!lVariables.checkIfValueExist(new ListOfVariables.OneOfVariables(tokens.get(newCounter).getValue()))) // сли переменной нету в таблице переменных, тогда ошибка
                 {
-                    System.out.println("VARIABLE doesn't EXISTS!");
-                    throw new LangParseException("VARIABLE doesn't EXISTS!");
+                    System.out.println("ERROR: VARIABLE doesn't EXISTS!");
+                    throw new LangParseException("ERROR: VARIABLE doesn't EXISTS!");
                 }
 
             } catch (LangParseException e2)
             {
-                counter = step;
+                counter = newCounter;
                 try
                 {
-                    condition_if();
-                } catch (LangParseException e3) {
-                    counter = step;
+                    condition_if(); // проверка является ли tokens.get(step) - If
+                } catch (LangParseException e3)
+                {
+                    counter = newCounter;
                     try
                     {
-                        cycle_for();
-                    } catch (LangParseException e4){
-                        counter = step;
-                        print();
+                        loop_for(); // проверка является ли tokens.get(step) - for
+                    } catch (LangParseException e4)
+                    {
+                        counter = newCounter;
+                        print(); // проверка является ли tokens.get(step) - print
                     }
                 }
             }
         }
     }
-    private Token match() throws LangParseException // отслежваем, чтобы мы не вышли за пределы массива
+    private Token match() throws LangParseException // возвращает новый токен и инкриминтирует счетчик
     {
-        Token token = null;
 
         if (counter < tokens.size())
         {
             token = tokens.get(counter);
             counter++;
-        } else throw new LangParseException("FATAL ERROR: Закончились токены проверки...");
+        } else throw new LangParseException("ERROR: Закончились токены проверки...");
 
         return token;
     }
@@ -188,6 +193,14 @@ public class Parser
     private void variableValue() throws LangParseException // реализуем присвоение
     {
         value();
+        if (tokens.get(counter - 1).getType().equals(LexemType.VAR)) // проверка существует ли уже переменная, которую мы хотим присвоить
+        {
+            if(!lVariables.checkIfValueExist(new ListOfVariables.OneOfVariables(tokens.get(counter - 1).getValue())))
+            {
+                System.out.println("ERROR: value doens't exist");
+                throw new LangParseException("ERROR: value doens't exist");
+            }
+        }
 
         while (tokens.size() > counter)
         {
@@ -196,6 +209,14 @@ public class Parser
 
             OP();
             value();
+            if (tokens.get(counter - 1).getType().equals(LexemType.VAR)) // проверка существует ли уже переменная, которую мы хотим присвоить
+            {
+                if(!lVariables.checkIfValueExist(new ListOfVariables.OneOfVariables(tokens.get(counter - 1).getValue())))
+                {
+                    System.out.println("ERROR: value doens't exist");
+                    throw new LangParseException("ERROR: value doens't exist");
+                }
+            }
         }
     }
 
@@ -213,12 +234,12 @@ public class Parser
         }
     }
 
-    private void matchToken(Token token, LexemType type) throws LangParseException
+    private void matchToken(Token token, LexemType type) throws LangParseException // проверяет тип текущего токена с ожидаемым типом
     {
         if (!token.getType().equals(type))
         {
-            throw new LangParseException("ERROR: " + token.getType()
-                    + " expected but "
+            throw new LangParseException("ERROR: " + type
+                    + " expected, but came "
                     + token.getType().name() + ": '" + token.getValue()
                     + "' found");
         }
