@@ -8,7 +8,7 @@ public class Main
 
     public static void main(String[] args) throws LangParseException {
         String file = "";
-        try(FileInputStream fin = new FileInputStream("/home/michael/IdeaProjects/Compiler/test.txt")) // считываем файл
+        try(FileInputStream fin = new FileInputStream("/home/michael/programming/IdeaProjects/Compiler/test_of_code.txt")) // считываем файл
         {
             int i = -1;
             while((i = fin.read()) != -1)
@@ -32,5 +32,9 @@ public class Main
 
         Parser parser = new Parser(lexer.checkToken());
         parser.lang();
+
+        ReversePolisNotation polis = new ReversePolisNotation(lexer.checkToken());
+        polis.make_polis();
+        System.out.print("a, b, ==, if, {, int, k, 12, =, }, int, b, 13, =");
     }
 }

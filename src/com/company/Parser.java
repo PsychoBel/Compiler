@@ -18,10 +18,10 @@ public class Parser
     {
         try
         {
-             while (tokens.size() > counter)
-             {
+            while (tokens.size() > counter)
+            {
                 expr();
-             }
+            }
             System.out.println("###### КОД ВЕРЕН ######");
             return true;
         } catch (LangParseException e)

@@ -13,6 +13,10 @@ public class Token
         this.value = value;
     }
 
+    public Token(String value)
+    {
+        this.value = value;
+    }
 
     public LexemType getType()
     {
