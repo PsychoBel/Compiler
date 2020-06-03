@@ -47,6 +47,9 @@ public class ReversePolisNotation
             case "-":
                 return 2;
 
+            case "=":
+                return 0;
+
             default:
                 return 1;
         }
@@ -91,6 +94,7 @@ public class ReversePolisNotation
                     addToken(p1);
                     Token m2 = new Token("!F");
                     addToken(m2);
+                    point_counter++;
                 }
 
                 continue;
@@ -133,20 +137,23 @@ public class ReversePolisNotation
                 {
                     if (token.getType() == LexemType.ROUND_CLOSE_BRACKET)
                     {
+                        System.out.println();
                         Token last_element = stack.pop();
                         while (last_element.getType() != LexemType.ROUND_OPEN_BRACKET)
                         {
                             addToken(last_element);
                             last_element = stack.pop();
                         }
-                    } else
+                    }
+                    else
                     {
                         if (priority(token) > priority(stack.peek()))
                         // если приоритет нашего токена выше, чем приоритет последнего элемента стека, то кладем его в стек,
                         // если нет, то вынимаем элементы из стека, до тех пор пока, элемент в стеке не будет меньше нашего токена
                         {
                             stack.add(token);
-                        } else
+                        }
+                        else
                         {
                             while (stack.size() > 0 && priority(token) <= priority(stack.peek()))
                             {
@@ -173,16 +180,17 @@ public class ReversePolisNotation
 
     public void getResult () // ф-ия печати result
     {
+        System.out.print("YOUR POLIS: ");
         for (Token token : result)
         {
-            System.out.print(token + " ");
+            System.out.print(token.getValue() + " ");
         }
     }
 
     public void addToken (Token token) // добавление токена в финальный список
     {
         result.add(token);
-        System.out.print(token.getValue() + " ");
+      //  System.out.print(token.getValue() + " ");
     }
 }
 

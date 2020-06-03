@@ -151,10 +151,10 @@ public class Parser
             {
                 variableAssigment(); // пытаемся присвоить уже существующей переменной новое значение
 
-                if (!lVariables.checkIfValueExist(new ListOfVariables.OneOfVariables(tokens.get(newCounter).getValue()))) // сли переменной нету в таблице переменных, тогда ошибка
+                if (!lVariables.checkIfValueExist(new ListOfVariables.OneOfVariables(tokens.get(newCounter).getValue()))) // если переменной нету в таблице переменных, тогда ошибка
                 {
-                    System.out.println("ERROR: VARIABLE doesn't EXISTS!");
-                    throw new LangParseException("ERROR: VARIABLE doesn't EXISTS!");
+                    System.out.println("ERROR: THE VARIABLE DOESN'T EXIST!");
+                    throw new LangParseException("ERROR: THE VARIABLE DOESN'T EXIST!");
                 }
 
             } catch (LangParseException e2)
@@ -197,8 +197,8 @@ public class Parser
         {
             if(!lVariables.checkIfValueExist(new ListOfVariables.OneOfVariables(tokens.get(counter - 1).getValue())))
             {
-                System.out.println("ERROR: value doens't exist");
-                throw new LangParseException("ERROR: value doens't exist");
+                System.out.println("ERROR: THE VARIABLE IS NOT INCILIZED!");
+                throw new LangParseException("ERROR: THE VARIABLE IS NOT INCILIZED");
             }
         }
 
@@ -213,8 +213,8 @@ public class Parser
             {
                 if(!lVariables.checkIfValueExist(new ListOfVariables.OneOfVariables(tokens.get(counter - 1).getValue())))
                 {
-                    System.out.println("ERROR: value doens't exist");
-                    throw new LangParseException("ERROR: value doens't exist");
+                    System.out.println("ERROR: THE VARIABLE IS NOT INCILIZED!");
+                    throw new LangParseException("ERROR: THE VARIABLE IS NOT INCILIZED!");
                 }
             }
         }

@@ -35,6 +35,8 @@ public class Main
 
         ReversePolisNotation polis = new ReversePolisNotation(lexer.checkToken());
         polis.make_polis();
-        System.out.print("a, b, ==, if, {, int, k, 12, =, }, int, b, 13, =");
+        polis.getResult();
+        System.out.println();
+        System.out.print("NEEDED POLIS: a 1 = a 3 < p1 !F a a 1 + = b a = p2 ! c b 2 + =");
     }
 }
