@@ -11,7 +11,7 @@ public class ListOfVariables // Тут будут хранится переме�
         String title = ""; // имя переменной
         String value = ""; // значение переменной
         // конструторы разных вариантов
-        public OneOfVariables (String type, String title, String value)
+        public OneOfVariables (String title, String type, String value)
         {
             this.title = title;
             this.type = type;
@@ -43,6 +43,8 @@ public class ListOfVariables // Тут будут хранится переме�
         this.LOfVariables.add(variable);
         return true;
     }
+
+
 
     public boolean checkIfValueExist(OneOfVariables variable) // проверка на то, существует ли уже наша переменная в таблице переменных
     {

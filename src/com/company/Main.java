@@ -32,6 +32,10 @@ public class Main
 
         Parser parser = new Parser(lexer.checkToken());
         parser.lang();
+        System.out.println(parser.getVarTable().size());
+        System.out.println(parser.getVarTable().keySet());
+        System.out.println(parser.getVarTable().values());
+
 
         ReversePolisNotation polis = new ReversePolisNotation(lexer.checkToken());
         polis.make_polis();

@@ -1,5 +1,7 @@
 package com.company;
 import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
 
 public class Parser
 {
@@ -7,11 +9,18 @@ public class Parser
     private ListOfVariables lVariables;
     private int counter = 0; // счетчик
     private Token token = null;
+    HashMap<String, HashMap<String, String>> tableForMachine = new HashMap<String, HashMap<String, String>>();
 
     public Parser(List<Token> tokens)
     {
         this.tokens = tokens;
         lVariables = new ListOfVariables();
+
+    }
+
+    public HashMap<String, HashMap<String, String>> getVarTable ()
+    {
+        return tableForMachine;
     }
 
     public boolean lang() throws LangParseException
@@ -64,6 +73,31 @@ public class Parser
         ROUND_CLOSE_BRACKET();
         SEMICOLON();
     }
+
+
+    private void loop_while () throws  LangParseException
+    {
+        KEY_WHILE();
+        ROUND_OPEN_BRACKET();
+        value();
+        COMPARISION_OP();
+        value();
+        ROUND_CLOSE_BRACKET();
+        FIGURE_OPEN_BRACKET();
+        int step2 = counter;
+
+        try {
+            while (!(tokens.get(counter).getType().equals(LexemType.FIGURE_CLOSE_BRACKET)))
+                value_expr();
+
+            FIGURE_CLOSE_BRACKET();
+        } catch (LangParseException e) {
+            counter = step2;
+            FIGURE_CLOSE_BRACKET();
+        }
+    }
+
+
 
     private void loop_for() throws LangParseException
     {
@@ -142,6 +176,10 @@ public class Parser
             else
             {
                 lVariables.addVariable(new ListOfVariables.OneOfVariables(tokens.get(newCounter).getValue(), tokens.get(newCounter + 1).getValue())); // если не сузествует, то добавляем в таблицу переменных, нашу переменную с ее типом
+                HashMap<String, String> innerMap = new HashMap<String, String>(); // внутренний hashmap, в котором будет храниться тип и значение переменной
+                innerMap.put("type", tokens.get(newCounter).getValue());
+                innerMap.put("value", "0");
+                tableForMachine.put(tokens.get(newCounter + 1).getValue(), innerMap);
             }
 
         } catch (LangParseException e)
@@ -172,7 +210,14 @@ public class Parser
                     } catch (LangParseException e4)
                     {
                         counter = newCounter;
-                        print(); // проверка является ли tokens.get(step) - print
+                        try
+                        {
+                            print(); // проверка является ли tokens.get(step) - print
+                        } catch (LangParseException e5)
+                        {
+                            counter = newCounter;
+                            loop_while();
+                        }
                     }
                 }
             }
@@ -234,6 +279,7 @@ public class Parser
         }
     }
 
+
     private void matchToken(Token token, LexemType type) throws LangParseException // проверяет тип текущего токена с ожидаемым типом
     {
         if (!token.getType().equals(type))
@@ -244,6 +290,7 @@ public class Parser
                     + "' found");
         }
     }
+
 
     private void VAR() throws LangParseException
     {
@@ -287,7 +334,7 @@ public class Parser
     }
     private void KEY_WHILE() throws LangParseException
     {
-        matchToken(match(), LexemType.KEY_FOR);
+        matchToken(match(), LexemType.KEY_WHILE);
     }
     private void KEY_ELSE() throws LangParseException
     {
