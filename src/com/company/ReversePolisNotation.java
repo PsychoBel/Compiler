@@ -2,16 +2,24 @@ package com.company;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ReversePolisNotation
 {
     private final List<Token> tokens; // список токенов
+    Token IfFlag; //
     public List<Integer> number_of_variable;
+    int isWhileCounter = 0;
+    int isIfCounter = 0;
+    private Stack<Token>  ifWhileStack = new Stack<>(); // стек для меток в while
+    Map<String, Integer> points = new HashMap<String, Integer>(); // Map для хранения наших меток
     Stack<Token> stack = new Stack<>(); // стек для операндов
     public List<Token> result = new ArrayList<>(); // список в инфиксном варианте
     boolean flag_IF = false; // флаг, когда встречаем IF
     boolean flag_WHILE = false; // аг когда встречаем WHILE
     int point_counter = 1; // счетчик меток
+    int point_position_counter = 0; // счетчик расположения меток
     public List<LexemType> operation = new ArrayList<>();
 
     public ReversePolisNotation (List<Token> tokens) // конструктор
@@ -25,6 +33,11 @@ public class ReversePolisNotation
         operation.add(LexemType.ASSIGN_OP);
     }
 
+
+    public Map<String, Integer> getPoints ()
+    {
+        return points;
+    }
 
     public List<Token> getTokens()  // getter
     {
@@ -59,7 +72,8 @@ public class ReversePolisNotation
     {
         for (Token token : tokens)
         {
-
+            if (token.getType().equals(LexemType.KEY_DATA_TYPE))
+                continue;
             if (token.getType().equals(LexemType.SEMICOLON))
             {
                 while (stack.size() > 0)
@@ -75,58 +89,81 @@ public class ReversePolisNotation
 
             if (token.getType().equals(LexemType.KEY_IF) || token.getType().equals(LexemType.KEY_WHILE)) // если встречаем IF или WHILE, то срабатывает флаг
             {
+                Token temporary;
 
                 if (token.getType().equals(LexemType.KEY_WHILE))
-                    flag_WHILE = true;
+                {
+                    temporary = new Token(LexemType.KEY_WHILE, "P" + point_counter);
+                    isWhileCounter++;
+                }
 
-                if (token.getType().equals(LexemType.KEY_IF))
-                    flag_IF = true;
+                else
+                {
+                    temporary = new Token(LexemType.KEY_IF, "P" + point_counter);
+                    isIfCounter++;
+                }
+                //?
+                points.put("P" + point_counter, point_position_counter);
+                point_counter++;
+                IfFlag = temporary;
+                ifWhileStack.push(temporary);
 
                 continue;
             }
 
-            if (token.getType().equals(LexemType.FIGURE_OPEN_BRACKET)) // если был IF или WHILE и начинается их тело, то ставаим метку
+            if (token.getType().equals(LexemType.FIGURE_OPEN_BRACKET))
             {
 
-                if (flag_IF || flag_WHILE)
-                {
-                    Token p1 = new Token("P" + point_counter);
-                    addToken(p1);
-                    Token m2 = new Token("!F");
-                    addToken(m2);
-                    point_counter++;
-                }
+            if ((isWhileCounter > 0) || (isIfCounter > 0)) {
+                addToken(IfFlag);
 
-                continue;
+                Token m2 = new Token("!F");
+                addToken(m2);
             }
-            if (token.getType().equals(LexemType.FIGURE_CLOSE_BRACKET)) // если закрывающаяся фигурная скобка, то добавляем все из стека, ставим метку (если WHILE), инкриминтируем счетчик
-            {
-                if (flag_IF)
-                {
-                    while (stack.size() > 0)
-                        addToken(stack.pop());
-                    // обязательно идет после addtoken (счетчик сдвигатся)
-                    //marksPosiions.put("P" + (markCunter - 1), markPositioinCounter);
 
-                    point_counter++; // сдвиг счетчика меток
-                    flag_IF = false;
+            continue;
+        }
+
+            if (token.getType().equals(LexemType.FIGURE_CLOSE_BRACKET)) {
+                if (isWhileCounter > 0) {
+                    if (ifWhileStack.peek().getType().equals(LexemType.KEY_WHILE)) {
+                        Token m1 = new Token(LexemType.KEY_WHILE, "P" + point_counter); //метка РХ с типом KEY_WHILE
+                        Token m2 = new Token(LexemType.KEY_WHILE,"!"); //метка ! с типом KEY_WHILE
+
+                        while (stack.size() > 0)
+                            addToken(stack.pop());
+
+                        addToken(m1);
+                        addToken(m2);
+
+//                        System.out.println("Выгружаем в таблицу: " + "P" + markCunter + ", " + ifWhileStack.peek().getValue());
+
+                        // обязательно идет после addtoken (счетчик сдвигатся)
+                        points.put("P" + point_counter, points.get(ifWhileStack.peek().getValue()));
+                        points.put(ifWhileStack.peek().getValue(), point_position_counter);
+
+
+                        point_counter++; // сдвиг счетчика меток
+                        isWhileCounter--;
+                    }
                 }
-                if (flag_WHILE)
-                {
 
-                    while (stack.size() > 0)
-                        addToken(stack.pop());
+                if (isIfCounter > 0) {
+                    if (ifWhileStack.peek().getType().equals(LexemType.KEY_IF)) {
+                        while (stack.size() > 0)
+                            addToken(stack.pop());
 
-                    addToken(new Token("P" + point_counter));
-                    addToken(new Token("!"));
+//                        System.out.println("Выгружаем в таблицу: " + ifWhileStack.peek().getValue());
+                        // обязательно идет после addtoken (счетчик сдвигатся)
+                        points.put(ifWhileStack.peek().getValue(), point_position_counter);
 
-                    // обязательно идет после addtoken (счетчик сдвигатся)
-                    //marksPosiions.put("P" + markCunter, marksPosiions.get("P" + (markCunter-1)));
-                    //marksPosiions.put("P" + (markCunter - 1), markPositioinCounter);
 
-                    point_counter++; // сдвиг счетчика меток
-                    flag_WHILE = false;
+                        point_counter++; // сдвиг счетчика меток
+                        isIfCounter--;
+                    }
                 }
+
+                ifWhileStack.pop(); // либо так, либо объединить через if-else KEY_IF и KEY_WHILE проверки выше
                 continue;
             }
             if (operation.contains(token.getType())) // если токен равен операции или скобкам, то идет работа со стеком
@@ -174,8 +211,10 @@ public class ReversePolisNotation
             }
 
         }
+        if (stack.size() > 0)
+            for (Token token : stack)
+                addToken(token);
     }
-
 
 
     public void getResult () // ф-ия печати result
@@ -190,6 +229,7 @@ public class ReversePolisNotation
     public void addToken (Token token) // добавление токена в финальный список
     {
         result.add(token);
+        point_position_counter++;
       //  System.out.print(token.getValue() + " ");
     }
 }

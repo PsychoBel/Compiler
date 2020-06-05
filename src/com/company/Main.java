@@ -41,6 +41,8 @@ public class Main
         polis.make_polis();
         polis.getResult();
         System.out.println();
-        System.out.print("NEEDED POLIS: a 1 = a 3 < p1 !F a a 1 + = b a = p2 ! c b 2 + =");
+        System.out.println("NEEDED POLIS: a 1 = a 3 < p1 !F a a 1 + = b a = p2 ! c b 2 + =");
+        System.out.println(polis.points.keySet());
+        System.out.println(polis.points.values());
     }
 }
