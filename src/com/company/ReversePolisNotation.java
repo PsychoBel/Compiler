@@ -22,6 +22,7 @@ public class ReversePolisNotation
     int point_counter = 1; // счетчик меток
     int point_position_counter = 0; // счетчик расположения меток
     public List<LexemType> operation = new ArrayList<>();
+    boolean printFlag = false;
 
     public ReversePolisNotation (List<Token> tokens) // конструктор
     {
@@ -75,10 +76,25 @@ public class ReversePolisNotation
         {
             if (token.getType().equals(LexemType.KEY_DATA_TYPE))
                 continue;
+
+            if (token.getType().equals(LexemType.KEY_PRINT))
+            {
+                printFlag = true;
+                continue;
+            }
+
             if (token.getType().equals(LexemType.SEMICOLON))
             {
                 while (stack.size() > 0)
                     addToken(stack.pop());
+
+                if (printFlag)
+                {
+                    addToken(new Token(LexemType.KEY_PRINT, "print"));
+                    printFlag = false;
+                }
+
+
                 continue;
             }
 
