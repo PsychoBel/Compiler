@@ -1,6 +1,8 @@
 package com.company;
 import java.io.*;
 import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 
 
 public class Main
@@ -24,15 +26,15 @@ public class Main
         Lexer lexer = new Lexer(file);
 
         System.out.println(lexer.fileInputGetter());
-        System.out.println(lexer.checkToken());
-        for (int i = 0; i < lexer.checkToken().size(); i++)
+        //System.out.println(lexer.checkToken());
+        /* for (int i = 0; i < lexer.checkToken().size(); i++)
         {
             System.out.println(lexer.checkToken().get(i).getType() + " " + lexer.checkToken().get(i).getValue());
         }
+        */
 
         Parser parser = new Parser(lexer.checkToken());
         parser.lang();
-        System.out.println(parser.getVarTable().size());
         System.out.println(parser.getVarTable().keySet());
         System.out.println(parser.getVarTable().values());
 
@@ -42,7 +44,14 @@ public class Main
         polis.getResult();
         System.out.println();
         System.out.println("NEEDED POLIS: a 1 = a 3 < p1 !F a a 1 + = b a = p2 ! c b 2 + =");
+        System.out.println(polis.points.size());
         System.out.println(polis.points.keySet());
         System.out.println(polis.points.values());
+
+
+        StackMachine machine = new StackMachine(polis.result);
+        machine.setVarTable(parser.tableForMachine);
+        machine.setMarksPosiions(polis.points);
+        machine.run();
     }
 }

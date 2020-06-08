@@ -53,8 +53,8 @@ public class ListOfVariables // Тут будут хранится переме�
         {
             OneOfVariables v = this.LOfVariables.get(i);
 
-            System.out.println("v.title: " + v.title);
-            System.out.println("variable.title: " + variable.title);
+            //System.out.println("v.title: " + v.title);
+            //System.out.println("variable.title: " + variable.title);
 
             if (v.title.equals(variable.title))
             {

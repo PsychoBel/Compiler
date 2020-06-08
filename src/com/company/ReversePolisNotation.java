@@ -7,6 +7,7 @@ import java.util.Map;
 
 public class ReversePolisNotation
 {
+
     private final List<Token> tokens; // список токенов
     Token IfFlag; //
     public List<Integer> number_of_variable;
