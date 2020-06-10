@@ -35,6 +35,14 @@ public class Main
 
         Parser parser = new Parser(lexer.checkToken());
         parser.lang();
+        if(!parser.checkBrackets())
+        {
+            System.out.println("ERROR: ERROR WITH BRACKETS");
+        }
+        else
+        {
+            System.out.println("RIGHT BRACKETS");
+        }
         System.out.println(parser.getVarTable().keySet());
         System.out.println(parser.getVarTable().values());
 

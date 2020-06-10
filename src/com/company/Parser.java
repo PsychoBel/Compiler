@@ -1,7 +1,8 @@
 package com.company;
 import java.util.List;
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Stack;
+
 
 public class Parser
 {
@@ -237,6 +238,7 @@ public class Parser
 
     private void variableValue() throws LangParseException // реализуем присвоение
     {
+        skipBracket();
         value();
         if (tokens.get(counter - 1).getType().equals(LexemType.VAR)) // проверка существует ли уже переменная, которую мы хотим присвоить
         {
@@ -249,10 +251,12 @@ public class Parser
 
         while (tokens.size() > counter)
         {
+            skipBracket();
             if (tokens.get(counter).getType().equals(LexemType.SEMICOLON)) // пока не дойдем до ;, выполняем OP и затем digit, либо value
                 break;
-
+            skipBracket();
             OP();
+            skipBracket();
             value();
             if (tokens.get(counter - 1).getType().equals(LexemType.VAR)) // проверка существует ли уже переменная, которую мы хотим присвоить
             {
@@ -290,6 +294,57 @@ public class Parser
                     + "' found");
         }
     }
+
+    public boolean checkBrackets () // функция проверки правильности скобочной последовательности
+    {
+        Stack<Token> stack = new Stack<>();
+        Token prevToken = tokens.get(0);
+        for (Token token : tokens)
+        {
+            LexemType type = token.getType();
+
+            if (type.equals(LexemType.ROUND_OPEN_BRACKET))
+            {
+                stack.push(token);
+                if ((prevToken.getType().equals(LexemType.DIGIT)) || (prevToken.getType().equals(LexemType.VAR)))
+                {
+                    return false;
+                }
+            }
+            if (type.equals(LexemType.ROUND_CLOSE_BRACKET))
+            {
+                if (stack.size() <= 0)
+                    return false;
+                if (stack.peek().getType().equals(LexemType.ROUND_OPEN_BRACKET))
+                {
+                    stack.pop();
+                }
+            }
+            if (type.equals(LexemType.ROUND_CLOSE_BRACKET))
+            {
+                if (prevToken.getType().equals(LexemType.OP))
+                {
+                    return false;
+                }
+            }
+            prevToken = token;
+        }
+
+        if (stack.size() > 0)
+        {
+            return false;
+        } else {
+            return true;
+        }
+        
+    }
+
+    private void skipBracket () // ф-ия для инцилизации переменной, пропуск скобок
+    {
+        while (tokens.get(counter).getType().equals(LexemType.ROUND_OPEN_BRACKET) || tokens.get(counter).getType().equals(LexemType.ROUND_CLOSE_BRACKET))
+            counter++;
+    }
+
 
 
     private void VAR() throws LangParseException

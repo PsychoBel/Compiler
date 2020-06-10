@@ -19,7 +19,7 @@ public class ReversePolisNotation
     public List<Token> result = new ArrayList<>(); // список в инфиксном варианте
     boolean flag_IF = false; // флаг, когда встречаем IF
     boolean flag_WHILE = false; // аг когда встречаем WHILE
-    int point_counter = 1; // счетчик меток
+    int point_counter = 1; // счетчик меток 
     int point_position_counter = 0; // счетчик расположения меток
     public List<LexemType> operation = new ArrayList<>();
     boolean printFlag = false;

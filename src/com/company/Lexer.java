@@ -10,17 +10,17 @@ public class Lexer
     private List<Token> tokens = new ArrayList<>(); // создаем массив токенов
 
 
-    public List<Token> getToken() // getter токенов
+    public List<Token> getToken()
     {
         return tokens;
     }
 
-    public Lexer(String fileInput)  // конструктор
+    public Lexer(String fileInput)
     {
         this.fileInput = fileInput;
     }
 
-    public String fileInputGetter() // getter (для тестов)
+    public String fileInputGetter()
     {
         return this.fileInput;
     }
