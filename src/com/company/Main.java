@@ -39,22 +39,17 @@ public class Main
         {
             System.out.println("ERROR: ERROR WITH BRACKETS");
         }
-        else
-        {
-            System.out.println("RIGHT BRACKETS");
-        }
         System.out.println(parser.getVarTable().keySet());
         System.out.println(parser.getVarTable().values());
 
 
         ReversePolisNotation polis = new ReversePolisNotation(lexer.checkToken());
         polis.make_polis();
-        polis.getResult();
-        System.out.println();
-        System.out.println("NEEDED POLIS: a 1 = a 3 < p1 !F a a 1 + = b a = p2 ! c b 2 + =");
-        System.out.println(polis.points.size());
-        System.out.println(polis.points.keySet());
-        System.out.println(polis.points.values());
+        //polis.getResult();
+        //System.out.println();
+        //System.out.println(polis.points.size());
+        //System.out.println(polis.points.keySet());
+        //System.out.println(polis.points.values());
 
 
         StackMachine machine = new StackMachine(polis.result);

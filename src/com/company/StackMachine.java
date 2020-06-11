@@ -10,6 +10,7 @@ public class StackMachine {
     private int counter = 0;
 
     HashMap<String, HashMap<String, String>> tableForMachine = new HashMap<String, HashMap<String, String>>();
+    HashMap<String, LinkedList> listTable = new HashMap<String, LinkedList>();
     Map<String, Integer> points = new HashMap<String, Integer>(); // Map для хранения наших меток
 
     int a, b, c;
@@ -18,6 +19,9 @@ public class StackMachine {
         this.tokens = tokens;
     }
 
+    public void setMarksPosiions(Map<String, Integer> marks) {
+        this.points = marks;
+    }
 
     public void setVarTable(HashMap<String, HashMap<String, String>> table) {
         this.tableForMachine = table;
@@ -53,6 +57,25 @@ public class StackMachine {
                 counter--; //костыль (почему-то прыгает на один элемент вперед - выяснить!
             } else if (token.getType() == LexemType.KEY_PRINT) {
                 System.out.println("F++ >  " + getVarFromTable(buffer.pop()));
+            } else if (token.getType() == LexemType.KEY_LIST) {
+                LinkedList list = new LinkedList();
+                counter++;
+                listTable.put(tokens.get(counter).getValue(), list);
+            } else if (token.getType() == LexemType.KEY_LIST_ADD) {
+                String variable = buffer.pop();             // название списка
+                LinkedList list = listTable.get(variable);  // этот список из таблиц
+                counter++;
+                int value = getVarFromTable(tokens.get(counter).getValue());    // значение переменной для записи в список
+                list.add(value);    // помещаю в список
+                listTable.put(variable, list); //возвращаю список обратно в таблицу
+            } else if (token.getType() == LexemType.KEY_LIST_GET) {
+                counter++;
+                int id = getVarFromTable(tokens.get(counter).getValue());
+
+                String variable = buffer.pop();
+                LinkedList list = listTable.get(variable);  // этот список из таблиц
+                int value = list.getByIndex(id);
+                buffer.push(String.valueOf(value));
             }
             counter++;
         }
@@ -123,9 +146,6 @@ public class StackMachine {
         buffer.push(String.valueOf(flag));
     }
 
-    public void setMarksPosiions(Map<String, Integer> marks) {
-        this.points = marks;
-    }
 
     private int getVarFromTable(String value) // возвращает число или значение переменной
     {

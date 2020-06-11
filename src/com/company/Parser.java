@@ -1,7 +1,5 @@
 package com.company;
-import java.util.List;
-import java.util.HashMap;
-import java.util.Stack;
+import java.util.*;
 
 
 public class Parser
@@ -11,6 +9,7 @@ public class Parser
     private int counter = 0; // счетчик
     private Token token = null;
     HashMap<String, HashMap<String, String>> tableForMachine = new HashMap<String, HashMap<String, String>>();
+    List<String> list_table = new ArrayList<>();
 
     public Parser(List<Token> tokens)
     {
@@ -54,15 +53,54 @@ public class Parser
         KEY_DATA_TYPE();
         VAR();
         ASSIGN_OP();
-        variableValue();
-        SEMICOLON();
+
+        int step = counter;
+        try {
+            variableValue();
+            SEMICOLON();
+        } catch (LangParseException e) {
+            counter = step;
+            listGet();
+        }
     }
 
     private  void variableAssigment() throws LangParseException // присвоение
     {
         VAR();
         ASSIGN_OP();
-        variableValue();
+        int step = counter;
+        try {
+            variableValue();
+            SEMICOLON();
+        } catch (LangParseException e) {
+            counter = step;
+            listGet();
+        }
+    }
+
+
+    private void listCreation () throws  LangParseException
+    {
+        KEY_LIST();
+        int step = counter;
+        VAR();
+        SEMICOLON();
+        list_table.add(tokens.get(step).getValue());
+    }
+
+    private  void listAdd () throws  LangParseException
+    {
+        VAR();
+        KEY_LIST_ADD();
+        value();
+        SEMICOLON();
+    }
+
+    private  void listGet () throws  LangParseException
+    {
+        VAR();
+        KEY_LIST_GET();
+        value();
         SEMICOLON();
     }
 
@@ -111,13 +149,11 @@ public class Parser
         COMPARISION_OP();
         value();
         SEMICOLON();
-
         // надо сделать проверку на +- 1
         VAR();
-        ASSIGN_OP();
-        value();
+        OP();
+        OP();
         ROUND_CLOSE_BRACKET();
-
         FIGURE_OPEN_BRACKET();
         int step2 = counter;
         try
@@ -217,7 +253,21 @@ public class Parser
                         } catch (LangParseException e5)
                         {
                             counter = newCounter;
-                            loop_while();
+                            try
+                            {
+                                loop_while();
+                            } catch (LangParseException e6)
+                            {
+                                counter = newCounter;
+                                try
+                                {
+                                    listCreation();
+                                } catch (LangParseException e7)
+                                {
+                                    counter = newCounter;
+                                    listAdd();
+                                }
+                            }
                         }
                     }
                 }
@@ -240,6 +290,10 @@ public class Parser
     {
         skipBracket();
         value();
+        if(list_table.contains(tokens.get(counter - 1).getValue()))
+        {
+            throw new LangParseException("ERROR");
+        }
         if (tokens.get(counter - 1).getType().equals(LexemType.VAR)) // проверка существует ли уже переменная, которую мы хотим присвоить
         {
             if(!lVariables.checkIfValueExist(new ListOfVariables.OneOfVariables(tokens.get(counter - 1).getValue())))
@@ -415,4 +469,15 @@ public class Parser
     {
         matchToken(match(), LexemType.DOUBLE_QUOTES);
     }
+    private  void KEY_LIST () throws  LangParseException {
+        matchToken(match(), LexemType.KEY_LIST);
+    }
+    private  void KEY_LIST_ADD () throws  LangParseException {
+        matchToken(match(), LexemType.KEY_LIST_ADD);
+    }
+
+    private  void KEY_LIST_GET () throws  LangParseException {
+        matchToken(match(), LexemType.KEY_LIST_GET);
+    }
+
 }
