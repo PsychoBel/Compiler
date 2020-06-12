@@ -191,7 +191,7 @@ public class ReversePolisNotation
                 {
                     if (token.getType() == LexemType.ROUND_CLOSE_BRACKET)
                     {
-                        System.out.println();
+                       // System.out.println();
                         Token last_element = stack.pop();
                         while (last_element.getType() != LexemType.ROUND_OPEN_BRACKET)
                         {

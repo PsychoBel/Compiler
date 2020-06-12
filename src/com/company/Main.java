@@ -27,11 +27,11 @@ public class Main
 
         System.out.println(lexer.fileInputGetter());
         //System.out.println(lexer.checkToken());
-        /* for (int i = 0; i < lexer.checkToken().size(); i++)
+        for (int i = 0; i < lexer.checkToken().size(); i++)
         {
             System.out.println(lexer.checkToken().get(i).getType() + " " + lexer.checkToken().get(i).getValue());
         }
-        */
+
 
         Parser parser = new Parser(lexer.checkToken());
         parser.lang();
@@ -39,15 +39,15 @@ public class Main
         {
             System.out.println("ERROR: ERROR WITH BRACKETS");
         }
-        System.out.println(parser.getVarTable().keySet());
-        System.out.println(parser.getVarTable().values());
+       // System.out.println(parser.getVarTable().keySet());
+        //System.out.println(parser.getVarTable().values());
 
 
         ReversePolisNotation polis = new ReversePolisNotation(lexer.checkToken());
         polis.make_polis();
         //polis.getResult();
         //System.out.println();
-        //System.out.println(polis.points.size());
+        //System.out.println(polis.points.size());5
         //System.out.println(polis.points.keySet());
         //System.out.println(polis.points.values());
 

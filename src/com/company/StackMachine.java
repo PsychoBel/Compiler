@@ -28,11 +28,11 @@ public class StackMachine {
     }
 
     public int run () {
-        System.out.println("\nStarting stack machine...");
+       // System.out.println("\nStarting stack machine...");
         Token token;
 
-        debugTable();
-        debugMark();
+      //  debugTable();
+        // debugMark();
 
         while (counter < tokens.size()) {
             token = tokens.get(counter);
@@ -56,7 +56,7 @@ public class StackMachine {
                 counter = pointValue;
                 counter--; //костыль (почему-то прыгает на один элемент вперед - выяснить!
             } else if (token.getType() == LexemType.KEY_PRINT) {
-                System.out.println("F++ >  " + getVarFromTable(buffer.pop()));
+                System.out.println("PRINT -->  " + getVarFromTable(buffer.pop()));
             } else if (token.getType() == LexemType.KEY_LIST) {
                 LinkedList list = new LinkedList();
                 counter++;
