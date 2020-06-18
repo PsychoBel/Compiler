@@ -2,7 +2,7 @@ package com.company;
 
 
 public class HashSet {
-    ListItem[] LListArray = new ListItem[16];
+    ListItem[] ListArray = new ListItem[16];
 
     public void add (String key, int value) {
         ListItem item = new ListItem(value);
@@ -10,11 +10,11 @@ public class HashSet {
         item.key  = key;
         int itemIndex = getIndex(key);
 
-        if (LListArray[itemIndex] == null) {
+        if (ListArray[itemIndex] == null) {
             item.setIndex(0);
-            LListArray[itemIndex] = item;
+            ListArray[itemIndex] = item;
         } else {
-            ListItem nItem = LListArray[itemIndex]; // используется для итерации и поиска последнего
+            ListItem nItem = ListArray[itemIndex];
             boolean isChanging = false;
 
             while (true) {
@@ -26,7 +26,7 @@ public class HashSet {
                 if (nItem.getNext() == null)
                     break;
 
-                nItem = nItem.getNext(); // итерируемся. На выходе будет последний элемент списка
+                nItem = nItem.getNext();
             }
 
             if (isChanging) {
@@ -41,19 +41,18 @@ public class HashSet {
 
     private int getHash (String key) {
         int hash = (int)key.charAt(0);
-        //System.out.println("HashCode for key: " + key + " = " + hash);
 
         return hash;
     }
 
     private int getIndex(String key) {
-        return getHash(key) % LListArray.length;
+        return getHash(key) % ListArray.length;
     }
 
     public int getByKey (String key) {
         int index = getIndex(key);
 
-        ListItem nItem = LListArray[index]; // используется для итерации и поиска последнего
+        ListItem nItem = ListArray[index];
 
         while (true) {
             if (nItem.key.compareTo(key) == 0)
@@ -62,14 +61,9 @@ public class HashSet {
             if (nItem.getNext() == null)
                 break;
 
-            nItem = nItem.getNext(); // итерируемся. На выходе будет последний элемент списка
+            nItem = nItem.getNext();
         }
-        return -1; //костыль бл
+        return 0;
 
     }
-}
-
-
-class LListNode {
-    public int test = 12;
 }

@@ -99,10 +99,6 @@ public class StackMachine {
                 counter++;
                 int value = getVarFromTable(tokens.get(counter).getValue());    // значение переменной для записи в список
 
-                System.out.println("1KEY   :-> " +  key);
-                System.out.println("1name  :-> " + variable);
-                System.out.println("1value :-> " + value);
-
                 HashSet set = MapTable.get(variable);       // этот список из таблиц
                 set.add(key, value);                   // помещаю в список
                 MapTable.put(variable, set); //возвращаю список обратно в таблицу
@@ -113,18 +109,13 @@ public class StackMachine {
                 String variable = buffer.pop();
                 HashSet set = MapTable.get(variable);  // этот список из таблиц
                 int value = set.getByKey(key);
-
-                System.out.println("2KEY   :-> " + key);
-                System.out.println("2name  :-> " + variable);
-                System.out.println("2value :-> " + value);
-
                 buffer.push(String.valueOf(value));
             }
             counter++;
         }
 
-        debugHashTable();
-        debugTable();
+        testHashTable();
+        testTable();
         return 0;
     }
 
@@ -212,7 +203,7 @@ public class StackMachine {
         }
     }
 
-    private void debugHashTable() {
+    private void testHashTable() {
         System.out.println("");
         System.out.printf("%-15s%-10s%n", "переменная", "значение");
         for (Map.Entry entry : MapTable.entrySet()) {
@@ -224,23 +215,12 @@ public class StackMachine {
         System.out.println();
     }
 
-    private void debugTable() {
+    private void testTable() {
         System.out.println("");
         System.out.printf("%-15s%-10s%n", "переменная", "значение");
         for (Map.Entry entry : tableForMachine.entrySet()) {
             // Выводим имя поля
             System.out.printf("%-15s", entry.getKey());
-            // Выводим значение поля
-            System.out.printf("%5s%n", entry.getValue());
-        }
-        System.out.println();
-    }
-    private void debugMark() {
-        System.out.println("");
-        System.out.printf("%-10s%-10s%n", "метка", "значение");
-        for (Map.Entry entry : points.entrySet()) {
-            // Выводим имя поля
-            System.out.printf("%-7s", entry.getKey());
             // Выводим значение поля
             System.out.printf("%5s%n", entry.getValue());
         }

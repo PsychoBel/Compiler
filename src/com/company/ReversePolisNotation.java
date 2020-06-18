@@ -24,10 +24,9 @@ public class ReversePolisNotation
     public List<LexemType> operation = new ArrayList<>();
     boolean printFlag = false;
 
-    public ReversePolisNotation (List<Token> tokens) // конструктор
+    public ReversePolisNotation (List<Token> tokens)
     {
         this.tokens = tokens;
-        // this.number_of_variable = number_of_variable;
         operation.add(LexemType.OP);
         operation.add(LexemType.ROUND_CLOSE_BRACKET);
         operation.add(LexemType.ROUND_OPEN_BRACKET);
@@ -46,7 +45,7 @@ public class ReversePolisNotation
         return tokens;
     }
 
-    public int priority (Token token) // расставляем приоритет операциям
+    public int priority (Token token)
     {
         switch (token.getValue())
         {
@@ -98,13 +97,13 @@ public class ReversePolisNotation
                 continue;
             }
 
-            if (token.getType().equals(LexemType.VAR)) // если операнд, то сразу записываем в итог
+            if (token.getType().equals(LexemType.VAR))
             {
                 addToken(token);
                 continue;
             }
 
-            if (token.getType().equals(LexemType.KEY_IF) || token.getType().equals(LexemType.KEY_WHILE)) // если встречаем IF или WHILE, то срабатывает флаг
+            if (token.getType().equals(LexemType.KEY_IF) || token.getType().equals(LexemType.KEY_WHILE))
             {
                 Token temporary;
 
@@ -144,8 +143,8 @@ public class ReversePolisNotation
             if (token.getType().equals(LexemType.FIGURE_CLOSE_BRACKET)) {
                 if (isWhileCounter > 0) {
                     if (ifWhileStack.peek().getType().equals(LexemType.KEY_WHILE)) {
-                        Token m1 = new Token(LexemType.KEY_WHILE, "P" + point_counter); //метка РХ с типом KEY_WHILE
-                        Token m2 = new Token(LexemType.KEY_WHILE,"!"); //метка ! с типом KEY_WHILE
+                        Token m1 = new Token(LexemType.KEY_WHILE, "P" + point_counter);
+                        Token m2 = new Token(LexemType.KEY_WHILE,"!");
 
                         while (stack.size() > 0)
                             addToken(stack.pop());
@@ -153,14 +152,11 @@ public class ReversePolisNotation
                         addToken(m1);
                         addToken(m2);
 
-//                        System.out.println("Выгружаем в таблицу: " + "P" + markCunter + ", " + ifWhileStack.peek().getValue());
-
-                        // обязательно идет после addtoken (счетчик сдвигатся)
                         points.put("P" + point_counter, points.get(ifWhileStack.peek().getValue()));
                         points.put(ifWhileStack.peek().getValue(), point_position_counter);
 
 
-                        point_counter++; // сдвиг счетчика меток
+                        point_counter++;
                         isWhileCounter--;
                     }
                 }
@@ -169,25 +165,20 @@ public class ReversePolisNotation
                     if (ifWhileStack.peek().getType().equals(LexemType.KEY_IF)) {
                         while (stack.size() > 0)
                             addToken(stack.pop());
-
-//                        System.out.println("Выгружаем в таблицу: " + ifWhileStack.peek().getValue());
-                        // обязательно идет после addtoken (счетчик сдвигатся)
                         points.put(ifWhileStack.peek().getValue(), point_position_counter);
 
 
-                        point_counter++; // сдвиг счетчика меток
+                        point_counter++;
                         isIfCounter--;
                     }
                 }
 
-                ifWhileStack.pop(); // либо так, либо объединить через if-else KEY_IF и KEY_WHILE проверки выше
+                ifWhileStack.pop();
                 continue;
             }
             if (operation.contains(token.getType())) // если токен равен операции или скобкам, то идет работа со стеком
             {
                 if ((stack.size() > 0) && (token.getType() != LexemType.ROUND_OPEN_BRACKET))
-                // если скобка закрывающася,
-                // то добавляем элементы стека в result, до тех пор полка не встретим открывающиеся скобки
                 {
                     if (token.getType() == LexemType.ROUND_CLOSE_BRACKET)
                     {
@@ -202,8 +193,6 @@ public class ReversePolisNotation
                     else
                     {
                         if (priority(token) > priority(stack.peek()))
-                        // если приоритет нашего токена выше, чем приоритет последнего элемента стека, то кладем его в стек,
-                        // если нет, то вынимаем элементы из стека, до тех пор пока, элемент в стеке не будет меньше нашего токена
                         {
                             stack.add(token);
                         }
@@ -234,7 +223,7 @@ public class ReversePolisNotation
     }
 
 
-    public void getResult () // ф-ия печати result
+    public void getResult ()
     {
         System.out.print("YOUR POLIS: ");
         for (Token token : result)
@@ -243,11 +232,11 @@ public class ReversePolisNotation
         }
     }
 
-    public void addToken (Token token) // добавление токена в финальный список
+    public void addToken (Token token)
     {
         result.add(token);
         point_position_counter++;
-      //  System.out.print(token.getValue() + " ");
+
     }
 }
 
