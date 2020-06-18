@@ -6,13 +6,16 @@ public class LinkedList
 {
     private ListItem firstItem = null;
 
-    public void add (int value) {
+    public void add (int value)
+    {
         ListItem item = new ListItem(value);
 
-        if (firstItem == null) {
+        if (firstItem == null)
+        {
             item.setIndex(0);
             firstItem = item;
-        } else {
+        } else
+            {
             ListItem nItem = firstItem; // используется для итерации и поиска последнего
 
             while (true) {
@@ -27,14 +30,16 @@ public class LinkedList
         }
     }
 
-    public int getByIndex (int index) {
+    public int getByIndex (int index)
+    {
         if (index == 0)
             return firstItem.value;
 
         int counter = 0;
         ListItem nItem = firstItem;
 
-        while (counter < index) {
+        while (counter < index)
+        {
             if (nItem.getNext() == null) // я пока не знаю как правильно
                 break;                   // если запрошу n+1 элемент - выход за рамки - вернет последний (пока что)
 

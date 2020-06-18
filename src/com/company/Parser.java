@@ -60,7 +60,14 @@ public class Parser
             SEMICOLON();
         } catch (LangParseException e) {
             counter = step;
-            listGet();
+            try
+            {
+                listGet();
+            } catch (LangParseException e1)
+            {
+                counter = step;
+                MapGet();
+            }
         }
     }
 
@@ -74,8 +81,40 @@ public class Parser
             SEMICOLON();
         } catch (LangParseException e) {
             counter = step;
-            listGet();
+            try
+            {
+                listGet();
+            } catch (LangParseException e1)
+            {
+                counter = step;
+                MapGet();
+            }
         }
+    }
+
+
+    private void MapCreation () throws  LangParseException
+    {
+        KEY_HASHMAP();
+        VAR();
+        SEMICOLON();
+    }
+
+    private  void MapAdd () throws  LangParseException
+    {
+        VAR();
+        KEY_HASH_ADD();
+        VAR();
+        value();
+        SEMICOLON();
+    }
+
+    private  void MapGet () throws  LangParseException
+    {
+        VAR();
+        KEY_HASH_GET();
+        value();
+        SEMICOLON();
     }
 
 
@@ -265,7 +304,21 @@ public class Parser
                                 } catch (LangParseException e7)
                                 {
                                     counter = newCounter;
-                                    listAdd();
+                                    try
+                                    {
+                                        listAdd();
+                                    } catch (LangParseException e8)
+                                    {
+                                        counter = newCounter;
+                                        try
+                                        {
+                                            MapAdd();
+                                        } catch (LangParseException e9)
+                                        {
+                                            counter = newCounter;
+                                            MapCreation();
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -469,15 +522,33 @@ public class Parser
     {
         matchToken(match(), LexemType.DOUBLE_QUOTES);
     }
-    private  void KEY_LIST () throws  LangParseException {
+    private  void KEY_LIST () throws  LangParseException
+    {
         matchToken(match(), LexemType.KEY_LIST);
     }
-    private  void KEY_LIST_ADD () throws  LangParseException {
+    private  void KEY_LIST_ADD () throws  LangParseException
+    {
         matchToken(match(), LexemType.KEY_LIST_ADD);
     }
 
-    private  void KEY_LIST_GET () throws  LangParseException {
+    private  void KEY_LIST_GET () throws  LangParseException
+    {
         matchToken(match(), LexemType.KEY_LIST_GET);
     }
+    private  void KEY_HASH_ADD () throws  LangParseException
+    {
+        matchToken(match(), LexemType.KEY_HASH_ADD);
+    }
+
+    private  void KEY_HASH_GET () throws  LangParseException
+    {
+        matchToken(match(), LexemType.KEY_HASH_GET);
+    }
+
+    private  void KEY_HASHMAP () throws  LangParseException
+    {
+        matchToken(match(), LexemType.KEY_HASHMAP);
+    }
+
 
 }

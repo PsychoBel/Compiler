@@ -9,6 +9,19 @@ public class Main
 {
 
     public static void main(String[] args) throws LangParseException {
+        if (false) {
+            HashSet hashSet = new HashSet();
+            hashSet.add("test_1", 17);
+            hashSet.add("test_2", 99);
+            hashSet.add("test_3", -5);
+
+            System.out.println("['test_1']: " + hashSet.getByKey("test_1"));
+            System.out.println("['test_2']: " + hashSet.getByKey("test_2"));
+            System.out.println("['test_3']: " + hashSet.getByKey("test_3"));
+            return;
+        }
+
+
         String file = "";
         try(FileInputStream fin = new FileInputStream("/home/michael/programming/IdeaProjects/Compiler/test_of_code.txt")) // считываем файл
         {
@@ -27,11 +40,11 @@ public class Main
 
         System.out.println(lexer.fileInputGetter());
         //System.out.println(lexer.checkToken());
-        for (int i = 0; i < lexer.checkToken().size(); i++)
+        /*for (int i = 0; i < lexer.checkToken().size(); i++)
         {
             System.out.println(lexer.checkToken().get(i).getType() + " " + lexer.checkToken().get(i).getValue());
         }
-
+        */
 
         Parser parser = new Parser(lexer.checkToken());
         parser.lang();

@@ -5,6 +5,8 @@ public class ListItem
 {
     public int value;
     public int index = 0;
+    public String key;
+    public int hash;
     public ListItem nextItemLink = null;
 
     public ListItem (int value) {
